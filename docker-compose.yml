@@ -1,0 +1,21 @@
+version: "3.7"
+
+services:
+  postgresdb:
+    build: ./postgres
+    ports:
+        - "5432:5432"
+
+  app:
+    build: .Dockerfile
+    ports:
+      - "1234:1234"
+    environment:
+      - USER=vova
+      - PASSWORD=123456
+      - HOST=postgresdb
+      - PORT=5432
+      - DATABASE=app_db
+    depends_on:
+      - postgresdb
+    restart: unless-stopped
