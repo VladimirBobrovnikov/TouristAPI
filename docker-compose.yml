@@ -7,14 +7,14 @@ services:
         - "5432:5432"
 
   app:
-    build: .Dockerfile
+    build: .
     ports:
       - "1234:1234"
     environment:
-      - USER=vova
+      - FSTR_DB_LOGIN=vova
       - PASSWORD=123456
-      - HOST=postgresdb
-      - PORT=5432
+      - FSTR_DB_HOST=postgresdb
+      - FSTR_DB_PORT=5432
       - DATABASE=app_db
     depends_on:
       - postgresdb

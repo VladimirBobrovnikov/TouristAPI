@@ -57,6 +57,7 @@ class User:
     phone: str
     fam: str
     name: str
+    id: Optional[int] = None
     email: Optional[str] = None
     otc: Optional[str] = None
 
@@ -66,6 +67,7 @@ class Coords:
     latitude: float
     longitude: float
     height: int
+    id: Optional[int] = None
 
 
 @dataclass
@@ -74,12 +76,15 @@ class Level:
     summer: str
     autumn: str
     spring: str
+    id: Optional[int] = None
 
 
 @dataclass
 class Image:
-    data: str
+    image: str
     title: str
+    data_id: int
+    id: Optional[int] = None
 
 
 @dataclass
@@ -92,6 +97,6 @@ class Data:
     user_id: int
     coords_id: int
     level_id: int
-    images_id: int
+    id: Optional[int] = None
 
 

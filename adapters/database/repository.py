@@ -1,16 +1,17 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Dict
 
 from sqlalchemy import (
-	DATETIME,
+	DateTime,
 	Integer,
 	Unicode,
 	Column,
-	create_engine,
 	ForeignKey,
 	Table,
 	MetaData,
 	Float,
+	insert,
+	select,
 )
 from sqlalchemy.orm import registry, relationship
 
@@ -61,8 +62,9 @@ images = Table(
 	'images',
 	metadata,
 	Column('id', Integer, primary_key=True),
-	Column('data', Unicode(255), nullable=False),
+	Column('image', Unicode(255), nullable=False),
 	Column('title', Unicode(255), nullable=False),
+	Column('data_id', Integer, ForeignKey('data.id'), nullable=False),
 )
 
 data = Table(
@@ -73,11 +75,10 @@ data = Table(
 	Column('title', Unicode(255), nullable=False),
 	Column('other_titles', Unicode(255), nullable=False),
 	Column('connect', Unicode(255), nullable=False),
-	Column('add_time', DATETIME, default=datetime.utcnow()),
+	Column('add_time', DateTime, default=datetime.utcnow()),
 	Column('user_id', Integer, ForeignKey('users.id'), nullable=False),
 	Column('coords_id', Integer, ForeignKey('coords.id'), nullable=False),
 	Column('level_id', Integer, ForeignKey('levels.id'), nullable=False),
-	Column('images_id', Integer, ForeignKey('images.id'), nullable=False),
 )
 
 mapper = registry()
@@ -85,7 +86,6 @@ mapper = registry()
 mapper.map_imperatively(dataclasses.User, users)
 mapper.map_imperatively(dataclasses.Coords, coords)
 mapper.map_imperatively(dataclasses.Level, levels)
-mapper.map_imperatively(dataclasses.Image, images)
 mapper.map_imperatively(
 	dataclasses.Data,
 	data,
@@ -104,20 +104,51 @@ mapper.map_imperatively(
 			dataclasses.Level,
 			backref='data',
 			lazy='joined',
-		),
-		'images': relationship(
-			dataclasses.Image,
-			backref='data',
+		)
+	}
+)
+mapper.map_imperatively(
+	dataclasses.Image,
+	images,
+	properties={
+		'data': relationship(
+			dataclasses.Data,
+			backref='images',
 			lazy='joined',
-		),
+		)
 	}
 )
 
 
 class Repository(interface.Repository):
-	def __init__(self, conn_string: str):
-		self.conn_string = conn_string
+	def __init__(self, engine):
+		self.engine = engine
 
-	def add_data(self, body: dataclasses.Data):
-		engine = metadata.cre(self.conn_string, )
+	def add_data(self, data_for_add: Dict) -> int:
+		query = insert(dataclasses.Data, data_for_add)
+		result = self.engine.execute(query)
+		return result.inserted_primary_key[0]
 
+	def add_user(self, user: Dict) -> int:
+		query = insert(dataclasses.User, user)
+		result = self.engine.execute(query)
+		return result.inserted_primary_key[0]
+
+	def add_coords(self, coords: Dict) -> int:
+		query = insert(dataclasses.Coords, coords)
+		result = self.engine.execute(query)
+		return result.inserted_primary_key[0]
+
+	def add_level(self, level: Dict) -> int:
+		query = insert(dataclasses.Level, level)
+		result = self.engine.execute(query)
+		return result.inserted_primary_key[0]
+
+	def add_image(self, image: Dict) -> int:
+		query = insert(dataclasses.Image, image)
+		result = self.engine.execute(query)
+		return result.inserted_primary_key[0]
+
+	def get_user_by_phone(self, user_phone: str) -> Optional[dataclasses.User]:
+		query = select(dataclasses.User).where(dataclasses.User.phone == user_phone)
+		return self.engine.execute(query).scalars().one_or_none()
