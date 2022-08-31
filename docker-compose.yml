@@ -6,16 +6,16 @@ services:
     ports:
         - "5432:5432"
 
-#  app:
-#    build: .
-#    ports:
-#      - "1234:1234"
-#    environment:
-#      - FSTR_DB_LOGIN=vova
-#      - PASSWORD=123456
-#      - FSTR_DB_HOST=postgresdb
-#      - FSTR_DB_PORT=5432
-#      - DATABASE=public
-#    depends_on:
-#      - postgresdb
-#    restart: unless-stopped
+  app:
+    build: .
+    ports:
+      - "1234:1234"
+    environment:
+      - FSTR_DB_LOGIN=vova
+      - PASSWORD=123456
+      - FSTR_DB_HOST=postgresdb
+      - FSTR_DB_PORT=5432
+      - DATABASE=public
+    depends_on:
+      - postgresdb
+    restart: unless-stopped
