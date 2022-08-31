@@ -56,8 +56,12 @@ class Controller:
 			message = str(e)
 			state = 0
 		else:
-			response.status_code = status.HTTP_202_ACCEPTED
-			status_now = 202
+			if state:
+				response.status_code = status.HTTP_202_ACCEPTED
+				status_now = 202
+			else:
+				response.status_code = status.HTTP_409_CONFLICT
+				status_now = 409
 		finally:
 			return {
 				"status": status_now,
