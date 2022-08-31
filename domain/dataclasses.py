@@ -31,6 +31,42 @@ class ImageInfo(BaseModel):
     title: str = Field(description='Название фото', example='Седловина')
 
 
+class PerevalInfoResponse(BaseModel):
+    id: str = Field(description='ID перевала в бд', example=1)
+    beauty_title: str = Field(description='Сокращенное название', example='пер. ')
+    title: str = Field(description='Название', example='Пхия')
+    other_titles: str = Field(description='Народное название', example='Триев')
+    connect: str = Field(description='Что соединяет', example='Текстовое поле')
+    add_time: datetime = Field(description='Время добавления', example=datetime.utcnow().isoformat())
+    coords: CoordsInfo = Field(
+        description='Координаты перевала',
+        example={
+            'latitude': 45.3842,
+            'longitude': 7.1525,
+            'height': 1200
+        }
+    )
+    level: LevelInfo = Field(
+        description='Уровень сложности',
+        example={
+            'winter': '2B',
+            'summer': '1А',
+            'autumn': '1А',
+            'spring': '2B',
+        }
+    )
+    images: List[ImageInfo] = Field(
+        description='Картинки',
+        example=[
+            {
+                'img': '\\x8534234568...',
+                'title': 'Седловина'
+            }
+        ]
+    )
+    status: bool = Field(description='Статус прохождения модерации', example=False)
+
+
 class BodyInfo(BaseModel):
     beauty_title: str = Field(description='Сокращенное название', example='пер. ')
     title: str = Field(description='Название', example='Пхия')
