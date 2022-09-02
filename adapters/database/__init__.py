@@ -1,2 +1,3 @@
 from .settings import Settings
-from .repository import metadata
+from .tables import mapper
+from . import repository

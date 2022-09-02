@@ -13,13 +13,20 @@ class Settings:
 
 class DB:
     engine = create_engine(Settings.db.DB_URL)
-    database.metadata.create_all(engine)
-    repository = database.repository.Repository(engine=engine)
+    database.mapper.metadata.create_all(engine)
+
+    pereval_repo = database.repository.PerevalRepository(engine=engine)
+    img_repo = database.repository.ImgRepo(engine=engine)
+    user_repo = database.repository.UserRepo(engine=engine)
 
 
 class Application:
-    service = service.MobileTourist(repository=DB.repository)
-    controller = http_api.Controller(service)
+    service = service.MobileTourist(
+        pereval_repo=DB.pereval_repo,
+        img_repo=DB.img_repo,
+        user_repo=DB.user_repo,
+    )
+    controller = http_api.Controller(service, DB.pereval_repo)
     app = FastAPI()
     app.include_router(controller.router)
 
