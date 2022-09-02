@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Response, status
 
 from domain.service import MobileTourist
-from domain.interface import Repository
+from domain.interface import PerevalRepository
 from domain.dataclasses import (
 	BodyInfo,
 	PerevalAddedResponse,
@@ -12,7 +12,7 @@ from domain.dataclasses import (
 
 
 class Controller:
-	def __init__(self, service: MobileTourist, repository: Repository):
+	def __init__(self, service: MobileTourist, repository: PerevalRepository):
 		self.service = service
 		self.repository = repository
 		self.router = APIRouter()
